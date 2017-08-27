@@ -44,7 +44,7 @@ compileTestKotlin {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'net.daniero.whatever.WhateverKt'
+        attributes 'Main-Class': 'net.daniero.whatever.MainKt'
     }
 
     // https://stackoverflow.com/a/26470211/1373657
