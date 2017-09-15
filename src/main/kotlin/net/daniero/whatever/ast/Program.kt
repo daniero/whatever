@@ -1,5 +1,4 @@
 package net.daniero.whatever.ast
 
-class Program {
+class Program(val statements: List<Statement>)
 
-}

@@ -1,23 +1,20 @@
 package net.daniero.whatever
 
-import net.daniero.whatever.parser.Parser
+import net.daniero.whatever.parser.parse
+import net.daniero.whatever.parser.tokenize
 import java.io.File
-import java.io.InputStream
 
 fun main(args: Array<String>) {
-    val inputStream = if (args.isNotEmpty()) {
-        File(args[0]).inputStream()
+    val input = if (args.isNotEmpty()) {
+        File(args[0]).readText()
     } else {
         """
         "Whatever, World!"
-        """.trimIndent().byteInputStream()
+        """.trimIndent()
     }
 
-    val whatever = init(inputStream)
-    whatever.run()
+    val tokens = tokenize(input)
+    val program = parse(tokens)
+    Whatever().run(program)
 }
 
-fun init(inputStream: InputStream): Whatever {
-    val program = Parser(inputStream).parse()
-    return Whatever(program)
-}

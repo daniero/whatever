@@ -3,14 +3,17 @@ package net.daniero.whatever
 import net.daniero.whatever.ast.Program
 import java.io.InputStream
 import java.io.PrintStream
+import java.util.*
 
-class Whatever(val program: Program,
-               var input: InputStream = System.`in`,
+class Whatever(var input: InputStream = System.`in`,
                var output: PrintStream = System.out,
-               var error: PrintStream = System.err) {
+               var error: PrintStream = System.err,
+               val stack: Stack<Any> = Stack()) {
 
-    fun run() {
-        output.println(program)
+    fun run(program: Program) {
+        program.statements.forEach {
+            it.invoke(this)
+        }
     }
 
 }
