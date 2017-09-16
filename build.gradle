@@ -50,6 +50,7 @@ kotlin {
     }
 }
 
+mainClassName = 'net.daniero.whatever.MainKt'
 
 jar {
     manifest {
