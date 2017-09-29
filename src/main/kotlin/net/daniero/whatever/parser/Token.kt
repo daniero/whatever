@@ -1,9 +1,11 @@
 package net.daniero.whatever.parser
 
 sealed class Token {
-    object Eof: Token()
+    object Unknown : Token()
+    object Eof : Token()
 }
 
-sealed class Literal<T>(val value: T): Token()
+sealed class Value<T>(val value: T) : Token()
 
-class StringLiteral(value: String) : Literal<String>(value)
+class IntValue(value: Int) : Value<Int>(value)
+class StringValue(value: String) : Value<String>(value)

@@ -12,8 +12,8 @@ class Whatever(var input: InputStream = System.`in`,
 
     fun run(program: Program) {
         program.statements.forEach {
-            it.invoke(this)
+            it.invoke(this, stack)
         }
     }
-
 }
+

@@ -1,12 +1,15 @@
 package net.daniero.whatever.parser
 
+import net.daniero.util.PeekIterator
 import java.text.ParseException
 import kotlin.coroutines.experimental.buildIterator
 
-fun tokenize(string: String) = Tokenizer(string).tokenize()
+fun tokenize(string: String): Iterator<Token> {
+    val peekIterator = PeekIterator(string.iterator())
+    return Tokenizer(peekIterator).tokenize()
+}
 
-private class Tokenizer(input: String) {
-    private val chars: CharIterator = input.iterator()
+private class Tokenizer(private val chars: PeekIterator<Char>) {
     private var currChar: Char? = null
 
     fun tokenize(): Iterator<Token> {
@@ -14,21 +17,39 @@ private class Tokenizer(input: String) {
             while (readNext() != null) {
                 skipWhiteSpace()
 
-               when (currChar) {
-                   '"' -> yield(readString())
-               }
+                val token: Token = when (currChar) {
+                    in '0'..'9' -> readInt()
+                    '"' -> readString()
+                    '+' -> Token.Plus
+                    else -> Token.Unknown
+                }
+
+                if (token != Token.Unknown) {
+                    yield(token)
+                }
+
             }
 
             yield(Token.Eof)
         }
     }
 
-    private fun readString(): StringLiteral {
+    private fun readInt(): IntValue {
+        val stringBuffer = StringBuffer(currChar.toString())
+
+        while (chars.hasNext() && chars.peek() in '0'..'9') {
+            stringBuffer.append(readNext())
+        }
+
+        return IntValue(Integer.valueOf(stringBuffer.toString()))
+    }
+
+    private fun readString(): StringValue {
         val buffer = StringBuffer()
 
         while (readNext() != '"') {
             if (currChar == null) {
-                throw ParseException("Unterminated string: \"${buffer.toString()}",0)
+                throw ParseException("Unterminated string: \"${buffer.toString()}", 0)
             }
             buffer.append(currChar!!)
         }
@@ -36,7 +57,7 @@ private class Tokenizer(input: String) {
         readNext()
 
         val value = buffer.toString()
-        val stringToken = StringLiteral(value)
+        val stringToken = StringValue(value)
         return stringToken
     }
 

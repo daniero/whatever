@@ -27,25 +27,37 @@ class TokenizerTest : Spek({
 
             assertEquals(Token.Eof, tokens.next())
         }
+    }
 
-        it("tokenizes string literals") {
+    describe("strings") {
+        it("gives string literals") {
             val tokens = tokenize(""" "Hey" "Hello" """)
 
             val token1 = tokens.next()
-            assertTrue(token1 is StringLiteral)
-            assertEquals("Hey", (token1 as StringLiteral).value)
+            assertTrue(token1 is StringValue)
+            assertEquals("Hey", (token1 as StringValue).value)
             val token2 = tokens.next()
-            assertTrue(token2 is StringLiteral)
-            assertEquals("Hello", (token2 as StringLiteral).value)
+            assertTrue(token2 is StringValue)
+            assertEquals("Hello", (token2 as StringValue).value)
             assertEquals(Token.Eof, tokens.next())
         }
 
-        it("throws exception on unterminated string literals") {
+        it("must be terminated") {
             val tokens = tokenize(""" "Oops """)
 
             assertFailsWith(ParseException::class) {
                 tokens.next()
             }
+        }
+    }
+
+    describe("integers") {
+        it("gives int literals") {
+            val tokens = tokenize(" 1 23 456")
+
+            assertEquals(1, (tokens.next() as IntValue).value)
+            assertEquals(23, (tokens.next() as IntValue).value)
+            assertEquals(456, (tokens.next() as IntValue).value)
         }
     }
 })

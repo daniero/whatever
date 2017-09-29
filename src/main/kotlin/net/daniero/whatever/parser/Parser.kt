@@ -1,19 +1,21 @@
 package net.daniero.whatever.parser
 
-import net.daniero.whatever.ast.*
+import net.daniero.whatever.ast.Program
+import net.daniero.whatever.ast.WhateverMethod
+import net.daniero.whatever.ast.WhateverStatement
 import java.util.*
 import kotlin.collections.ArrayList
 
 fun parse(tokens: Iterator<Token>) = Parser(tokens).parse()
 
 private class Parser(val tokens: Iterator<Token>) {
-    val parameters = Stack<Literal<*>>()
-    val program: MutableList<Statement> = ArrayList()
+    val parameters = Stack<Value<*>>()
+    val program: MutableList<WhateverStatement> = ArrayList()
 
     fun parse(): Program {
         tokens.forEach {
             when (it) {
-                is Literal<*> -> parameters.push(it)
+                is Value<*> -> parameters.push(it)
                 is Token.Eof -> parseEof()
             }
         }
@@ -22,9 +24,10 @@ private class Parser(val tokens: Iterator<Token>) {
 
     private fun parseEof() {
         while (parameters.isNotEmpty()) {
-            val literal = parameters.pop()
-            program.add { whatever -> whatever.output.print(literal.value) }
+            val value = parameters.pop()
+            program.add(WhateverMethod(0, 0) { whatever -> whatever.output.print(value.value) })
         }
     }
 
 }
+
