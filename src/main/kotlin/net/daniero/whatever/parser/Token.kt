@@ -3,6 +3,7 @@ package net.daniero.whatever.parser
 sealed class Token {
     object Unknown : Token()
     object Eof : Token()
+    object Plus : Token()
 }
 
 sealed class Value<T>(val value: T) : Token()

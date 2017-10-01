@@ -15,5 +15,19 @@ class Whatever(var input: InputStream = System.`in`,
             it.invoke(this, stack)
         }
     }
+
+    fun reset() {
+        stack.clear()
+    }
+
+    fun puts(values: List<*>): List<*> {
+        values.forEach(output::print)
+        return values
+    }
+
+    fun puts(value: Any): List<*> {
+        output.print(value)
+        return listOf<Any>(value)
+    }
 }
 

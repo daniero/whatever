@@ -22,10 +22,12 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     maven { url "http://dl.bintray.com/jetbrains/spek" }
+    maven { url "http://jcenter.bintray.com" }
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile 'org.funktionale:funktionale-currying:1.1'
 
     testCompile "org.jetbrains.kotlin:kotlin-test"
 
