@@ -6,7 +6,23 @@ sealed class Token {
     object Plus : Token()
 }
 
-sealed class Value<T>(val value: T) : Token()
+sealed class Value : Token() {
+    abstract operator fun plus(that: Value): Value
+}
 
-class IntValue(value: Int) : Value<Int>(value)
-class StringValue(value: String) : Value<String>(value)
+internal class IntValue(val value: Int) : Value() {
+    override fun plus(that: Value): Value {
+        return when (that) {
+            is IntValue -> IntValue(this.value + that.value)
+            is StringValue -> TODO()
+        }
+    }
+
+    override fun toString() = value.toString()
+}
+
+class StringValue(val value: String) : Value() {
+    override fun plus(that: Value): Value = TODO()
+
+    override fun toString() = value
+}

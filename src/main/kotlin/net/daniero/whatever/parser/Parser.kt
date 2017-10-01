@@ -9,14 +9,14 @@ import kotlin.collections.ArrayList
 fun parse(tokens: Iterator<Token>) = Parser(tokens).parse()
 
 private class Parser(val tokens: Iterator<Token>) {
-    val parameters = Stack<Value<*>>()
+    val parameters = Stack<Value>()
     val program: MutableList<WhateverMethod> = ArrayList()
     var scope: WhateverFunction = EmptyFunction
 
     fun parse(): Program {
         tokens.forEach {
             when (it) {
-                is Value<*> -> parameters.push(it)
+                is Value -> parameters.push(it)
                 is Token.Plus -> parsePlus()
                 is Token.Eof -> parseEof()
             }
@@ -25,11 +25,11 @@ private class Parser(val tokens: Iterator<Token>) {
     }
 
     private fun parsePlus() {
-        val plus: (Int, Int) -> Int = { a, b -> a + b }
+        val plus: (Value, Value) -> Value = { a, b -> a + b }
 
         when (parameters.size) {
             0 -> appendFunction(createWhateverFunction(plus))
-            1 -> appendFunction(createWhateverFunction(plus.curried()(parameters.pop().value as Int)))
+            1 -> appendFunction(createWhateverFunction(plus.curried()(parameters.pop())))
         }
     }
 
@@ -40,7 +40,7 @@ private class Parser(val tokens: Iterator<Token>) {
                 it.puts(values)
             }
         } else {
-            program += parameters.map { WhateverMethod(0, 0) { whatever -> whatever.puts(it.value!!) } }
+            program += parameters.map { WhateverMethod(0, 0) { whatever -> whatever.puts(it) } }
         }
     }
 
@@ -48,20 +48,18 @@ private class Parser(val tokens: Iterator<Token>) {
         scope = scope.append(singleFunction)
     }
 
-    private fun createWhateverFunction(function: (Int) -> Int): SingleFunction {
-        return SingleFunction(1, 1, { stack ->
-            val a = stack.pop()
-            val result = function.invoke(a as Int)
-            listOf(result)
-        })
-    }
+    private fun createWhateverFunction(function: (Value) -> Value): SingleFunction =
+            SingleFunction(1, 1, { stack ->
+                val a = stack.pop()
+                val result = function.invoke(a)
+                listOf(result)
+            })
 
-    private fun createWhateverFunction(function: (Int, Int) -> Int): SingleFunction {
-        return SingleFunction(2, 1, { stack ->
-            val (a, b) = stack.pop(2)
-            val result = function.invoke(a as Int, b as Int)
-            listOf(result)
-        })
-    }
+    private fun createWhateverFunction(function: (Value, Value) -> Value): SingleFunction =
+            SingleFunction(2, 1, { stack ->
+                val (a, b) = stack.pop(2)
+                val result = function.invoke(a, b)
+                listOf(result)
+            })
 }
 
