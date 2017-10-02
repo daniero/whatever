@@ -21,6 +21,9 @@ private class Tokenizer(private val chars: PeekIterator<Char>) {
                     in '0'..'9' -> readInt()
                     '"' -> readString()
                     '+' -> Token.Plus
+                    '-' -> Token.Minus
+                    '*' -> Token.Times
+                    '/' -> Token.Divide
                     else -> Token.Unknown
                 }
 

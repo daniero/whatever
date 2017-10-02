@@ -44,7 +44,7 @@ class WhateverTest : Spek({
 
     describe("functions") {
         describe("plus") {
-            it("takes two values from the stack and returns one") {
+            it("takes two values from the stack and returns the sum") {
                 whatever.stack.push(1)
                 whatever.stack.push(2)
                 whatever.stack.push(4)
@@ -61,6 +61,65 @@ class WhateverTest : Spek({
                 val output = run(" 2+ ")
 
                 assertEquals("3", output)
+            }
+        }
+
+        describe("minus") {
+            it("takes two values from the stack and returns the difference") {
+                whatever.stack.push(4)
+                whatever.stack.push(1)
+
+                val output = run(" - ")
+
+                assertEquals("3", output)
+            }
+
+            it("only takes one value if given a parameter") {
+                whatever.stack.push(9)
+
+                val output = run(" 2- ")
+
+                assertEquals("7", output)
+            }
+        }
+
+        describe("times") {
+            it("takes two values from the stack and returns the product") {
+                whatever.stack.push(2)
+                whatever.stack.push(3)
+                whatever.stack.push(5)
+
+                val output = run(" * ")
+
+                assertEquals("15", output)
+            }
+
+            it("only takes one value if given a parameter") {
+                whatever.stack.push(3)
+                whatever.stack.push(5)
+
+                val output = run(" 2* ")
+
+                assertEquals("10", output)
+            }
+        }
+
+        describe("divide") {
+            it("takes two values from the stack and returns the dividend") {
+                whatever.stack.push(100)
+                whatever.stack.push(5)
+
+                val output = run(" / ")
+
+                assertEquals("20", output)
+            }
+
+            it("only takes one value if given a parameter") {
+                whatever.stack.push(10)
+
+                val output = run(" 2/ ")
+
+                assertEquals("5", output)
             }
         }
     }

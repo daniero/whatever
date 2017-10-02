@@ -2,7 +2,7 @@ package net.daniero.whatever.parser
 
 import net.daniero.util.pop
 import net.daniero.whatever.ast.*
-import org.funktionale.currying.curried
+import org.funktionale.partials.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -17,19 +17,20 @@ private class Parser(val tokens: Iterator<Token>) {
         tokens.forEach {
             when (it) {
                 is Value -> parameters.push(it)
-                is Token.Plus -> parsePlus()
+                is Token.Plus -> parseFunction { a, b -> a + b }
+                is Token.Minus -> parseFunction { a, b -> a - b }
+                is Token.Times -> parseFunction { a, b -> a * b }
+                is Token.Divide -> parseFunction { a, b -> a / b }
                 is Token.Eof -> parseEof()
             }
         }
         return Program(program)
     }
 
-    private fun parsePlus() {
-        val plus: (Value, Value) -> Value = { a, b -> a + b }
-
+    private fun parseFunction(function: (Value, Value) -> Value) {
         when (parameters.size) {
-            0 -> appendFunction(createWhateverFunction(plus))
-            1 -> appendFunction(createWhateverFunction(plus.curried()(parameters.pop())))
+            0 -> appendFunction(createWhateverFunction(function))
+            1 -> appendFunction(createWhateverFunction(function(p2 = parameters.pop())))
         }
     }
 
