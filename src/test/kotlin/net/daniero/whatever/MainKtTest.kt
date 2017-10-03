@@ -123,8 +123,18 @@ class WhateverTest : Spek({
             }
         }
     }
+
+    describe("function chains") {
+        it("works") {
+            whatever.stack.push(2, 3)
+
+            val output = run(" 1+ * ")
+
+            assertEquals("8", output)
+        }
+    }
 })
 
-fun Stack<Value>.push(n: Int) {
-    push(IntValue(n))
+fun Stack<Value>.push(vararg ns: Int) {
+    addAll(ns.map(::IntValue))
 }

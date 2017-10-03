@@ -26,7 +26,26 @@ class SingleFunction(private val function: (Stack<Value>) -> List<Value>) : What
     }
 
     override fun append(function: SingleFunction): WhateverFunction {
-        TODO()
+        return FunctionChain(listOf(this, function))
+    }
+}
+
+private class FunctionChain(private val functions: List<SingleFunction>) : WhateverFunction() {
+
+    override fun invoke(whatever: Whatever, stack: Stack<Value>): List<Value> {
+        var out = emptyList<Value>()
+
+        functions.forEach {
+            val result = it.invoke(whatever, stack)
+            out = result
+            stack.addAll(result)
+        }
+
+        return out
+    }
+
+    override fun append(function: SingleFunction): WhateverFunction {
+        return FunctionChain(functions + function)
     }
 }
 
