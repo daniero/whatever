@@ -4,18 +4,15 @@ import net.daniero.whatever.Whatever
 import net.daniero.whatever.parser.Value
 import java.util.*
 
-sealed class WhateverStatement(
-        val ins: Int,
-        val outs: Int
-) {
-    abstract fun invoke(whatever: Whatever, stack: Stack<Value>) : List<Value>
+sealed class WhateverStatement {
+    abstract fun invoke(whatever: Whatever, stack: Stack<Value>): List<Value>
 }
 
-sealed class WhateverFunction(ins: Int, outs: Int) : WhateverStatement(ins, outs) {
+sealed class WhateverFunction : WhateverStatement() {
     abstract fun append(function: SingleFunction): WhateverFunction
 }
 
-object EmptyFunction : WhateverFunction(0, 0) {
+object EmptyFunction : WhateverFunction() {
     override fun invoke(whatever: Whatever, stack: Stack<Value>): List<Value> = emptyList<Value>()
 
     override fun append(function: SingleFunction): WhateverFunction {
@@ -23,11 +20,7 @@ object EmptyFunction : WhateverFunction(0, 0) {
     }
 }
 
-class SingleFunction(ins: Int,
-                     outs: Int,
-                     private val function: (Stack<Value>) -> List<Value>
-) : WhateverFunction(ins, outs) {
-
+class SingleFunction(private val function: (Stack<Value>) -> List<Value>) : WhateverFunction() {
     override fun invoke(whatever: Whatever, stack: Stack<Value>): List<Value> {
         return function.invoke(stack)
     }
@@ -37,10 +30,7 @@ class SingleFunction(ins: Int,
     }
 }
 
-class WhateverMethod(ins: Int,
-                     outs: Int,
-                     private val method: (Whatever) -> List<Value>
-) : WhateverStatement(ins, outs) {
+class WhateverMethod(private val method: (Whatever) -> List<Value>) : WhateverStatement() {
     override fun invoke(whatever: Whatever, stack: Stack<Value>): List<Value> {
         return method.invoke(whatever)
     }

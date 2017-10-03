@@ -34,33 +34,33 @@ private class Parser(val tokens: Iterator<Token>) {
         }
     }
 
-    private fun parseEof() {
-        if (parameters.empty()) {
-            program += WhateverMethod(0, 0) {
-                val values = scope.invoke(it, it.stack)
-                it.puts(values)
-            }
-        } else {
-            program += parameters.map { WhateverMethod(0, 0) { whatever -> whatever.puts(it) } }
-        }
-    }
-
     private fun appendFunction(singleFunction: SingleFunction) {
         scope = scope.append(singleFunction)
     }
 
+    private fun parseEof() {
+        if (parameters.empty()) {
+            program += WhateverMethod {
+                val values = scope.invoke(it, it.stack)
+                it.puts(values)
+            }
+        } else {
+            program += parameters.map { WhateverMethod { whatever -> whatever.puts(it) } }
+        }
+    }
+
     private fun createWhateverFunction(function: (Value) -> Value): SingleFunction =
-            SingleFunction(1, 1, { stack ->
+            SingleFunction { stack ->
                 val a = stack.pop()
                 val result = function.invoke(a)
                 listOf(result)
-            })
+            }
 
     private fun createWhateverFunction(function: (Value, Value) -> Value): SingleFunction =
-            SingleFunction(2, 1, { stack ->
+            SingleFunction { stack ->
                 val (a, b) = stack.pop(2)
                 val result = function.invoke(a, b)
                 listOf(result)
-            })
+            }
 }
 
