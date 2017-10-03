@@ -1,8 +1,8 @@
 package net.daniero.whatever
 
+import net.daniero.util.ValueStack
 import net.daniero.whatever.io.StringPrintStream
 import net.daniero.whatever.parser.IntValue
-import net.daniero.whatever.parser.Value
 import net.daniero.whatever.parser.parse
 import net.daniero.whatever.parser.tokenize
 import org.jetbrains.spek.api.Spek
@@ -11,7 +11,6 @@ import org.jetbrains.spek.api.dsl.it
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.platform.runner.JUnitPlatform
 import org.junit.runner.RunWith
-import java.util.*
 
 @RunWith(JUnitPlatform::class)
 class WhateverTest : Spek({
@@ -135,6 +134,6 @@ class WhateverTest : Spek({
     }
 })
 
-fun Stack<Value>.push(vararg ns: Int) {
-    addAll(ns.map(::IntValue))
+fun ValueStack.push(vararg ns: Int) {
+    ns.forEach { push(IntValue(it)) }
 }
