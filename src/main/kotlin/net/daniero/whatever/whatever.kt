@@ -22,12 +22,12 @@ class Whatever(var input: InputStream = System.`in`,
     }
 
     fun puts(values: List<Value>): List<Value> {
-        values.forEach(output::print)
+        values.forEach(output::println)
         return values
     }
 
     fun puts(value: Value): List<Value> {
-        output.print(value)
+        output.println(value)
         return listOf(value)
     }
 }

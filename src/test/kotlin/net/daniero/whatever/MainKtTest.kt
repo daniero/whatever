@@ -3,6 +3,7 @@ package net.daniero.whatever
 import net.daniero.util.ValueStack
 import net.daniero.whatever.io.StringPrintStream
 import net.daniero.whatever.parser.IntValue
+import net.daniero.whatever.parser.StringValue
 import net.daniero.whatever.parser.parse
 import net.daniero.whatever.parser.tokenize
 import org.jetbrains.spek.api.Spek
@@ -37,7 +38,20 @@ class WhateverTest : Spek({
                 "Hello World"
             """)
 
-            assertEquals("Hello World", output)
+            assertEquals("Hello World\n", output)
+        }
+    }
+
+    describe("implicit output by the end of the program") {
+        it("prints all values on the stack by default") {
+            whatever.stack.push("Go!")
+            whatever.stack.push(1)
+            whatever.stack.push(2)
+            whatever.stack.push(3)
+
+            val output = run("")
+
+            assertEquals("3\n2\n1\nGo!\n", output)
         }
     }
 
@@ -50,7 +64,7 @@ class WhateverTest : Spek({
 
                 val output = run(" + ")
 
-                assertEquals("6", output)
+                assertEquals("6\n", output)
             }
 
             it("only takes one value if given a parameter") {
@@ -59,7 +73,7 @@ class WhateverTest : Spek({
 
                 val output = run(" 2+ ")
 
-                assertEquals("3", output)
+                assertEquals("3\n", output)
             }
         }
 
@@ -70,7 +84,7 @@ class WhateverTest : Spek({
 
                 val output = run(" - ")
 
-                assertEquals("3", output)
+                assertEquals("3\n", output)
             }
 
             it("only takes one value if given a parameter") {
@@ -78,7 +92,7 @@ class WhateverTest : Spek({
 
                 val output = run(" 2- ")
 
-                assertEquals("7", output)
+                assertEquals("7\n", output)
             }
         }
 
@@ -90,7 +104,7 @@ class WhateverTest : Spek({
 
                 val output = run(" * ")
 
-                assertEquals("15", output)
+                assertEquals("15\n", output)
             }
 
             it("only takes one value if given a parameter") {
@@ -99,7 +113,7 @@ class WhateverTest : Spek({
 
                 val output = run(" 2* ")
 
-                assertEquals("10", output)
+                assertEquals("10\n", output)
             }
         }
 
@@ -110,7 +124,7 @@ class WhateverTest : Spek({
 
                 val output = run(" / ")
 
-                assertEquals("20", output)
+                assertEquals("20\n", output)
             }
 
             it("only takes one value if given a parameter") {
@@ -118,7 +132,7 @@ class WhateverTest : Spek({
 
                 val output = run(" 2/ ")
 
-                assertEquals("5", output)
+                assertEquals("5\n", output)
             }
         }
     }
@@ -129,12 +143,12 @@ class WhateverTest : Spek({
 
             val output = run(" 1+ * ")
 
-            assertEquals("8", output)
+            assertEquals("8\n", output)
         }
     }
 
     describe("Map") {
-        it("works") {
+        it("transforms each value on the stack with the given function") {
             whatever.stack.push(1, 2, 3)
 
             val output = run(" 3* M ")
@@ -142,10 +156,15 @@ class WhateverTest : Spek({
             assertEquals(IntValue(3), whatever.stack.values[0])
             assertEquals(IntValue(6), whatever.stack.values[1])
             assertEquals(IntValue(9), whatever.stack.values[2])
+            assertEquals("9\n6\n3\n", output)
         }
     }
 })
 
 fun ValueStack.push(vararg ns: Int) {
     ns.forEach { push(IntValue(it)) }
+}
+
+fun ValueStack.push(vararg strings: String) {
+    strings.forEach { push(StringValue(it)) }
 }

@@ -56,6 +56,8 @@ private class Parser(val tokens: Iterator<Token>) {
     private fun parseEof() {
         if (parameters.isNotEmpty()) {
             program += parameters.map { parameter -> WhateverMethod { whatever -> whatever.puts(parameter) } }
+        } else if (scope == EmptyFunction) {
+            program += WhateverMethod { whatever -> whatever.puts(whatever.stack.values.reversed()) }
         } else {
             program += WhateverMethod { whatever ->
                 val values = scope.invoke(whatever, whatever.stack)
