@@ -1,5 +1,6 @@
 package net.daniero.whatever.ast
 
+import net.daniero.util.OutputBuffer
 import net.daniero.util.ValueStack
 import net.daniero.whatever.Whatever
 import net.daniero.whatever.parser.Value
@@ -33,15 +34,14 @@ class SingleFunction(private val function: (ValueStack) -> List<Value>) : Whatev
 private class FunctionChain(private val functions: List<SingleFunction>) : WhateverFunction() {
 
     override fun invoke(whatever: Whatever, stack: ValueStack): List<Value> {
-        var out = emptyList<Value>()
+        val outputBuffer = OutputBuffer(stack)
 
         functions.forEach {
-            val result = it.invoke(whatever, stack)
-            out = result
-            stack.push(result)
+            val result = it.invoke(whatever, outputBuffer)
+            outputBuffer.push(result)
         }
 
-        return out
+        return outputBuffer.output.values
     }
 
     override fun append(function: SingleFunction): WhateverFunction {

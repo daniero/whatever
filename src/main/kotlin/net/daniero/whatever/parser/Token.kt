@@ -7,6 +7,7 @@ sealed class Token {
     object Minus : Token()
     object Times : Token()
     object Divide : Token()
+    object Map : Token()
 }
 
 sealed class Value : Token() {
@@ -46,6 +47,17 @@ internal class IntValue(val value: Int) : Value() {
     }
 
     override fun toString() = value.toString()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is IntValue) return false
+
+        return this.value == other.value
+    }
+
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
 }
 
 class StringValue(val value: String) : Value() {

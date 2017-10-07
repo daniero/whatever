@@ -132,6 +132,18 @@ class WhateverTest : Spek({
             assertEquals("8", output)
         }
     }
+
+    describe("Map") {
+        it("works") {
+            whatever.stack.push(1, 2, 3)
+
+            val output = run(" 3* M ")
+
+            assertEquals(IntValue(3), whatever.stack.values[0])
+            assertEquals(IntValue(6), whatever.stack.values[1])
+            assertEquals(IntValue(9), whatever.stack.values[2])
+        }
+    }
 })
 
 fun ValueStack.push(vararg ns: Int) {

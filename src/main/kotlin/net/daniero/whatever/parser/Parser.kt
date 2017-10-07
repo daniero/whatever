@@ -1,8 +1,8 @@
 package net.daniero.whatever.parser
 
-import net.daniero.util.pop
+import net.daniero.util.SimpleValueStack
 import net.daniero.whatever.ast.*
-import org.funktionale.partials.*
+import org.funktionale.partials.invoke
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -21,6 +21,7 @@ private class Parser(val tokens: Iterator<Token>) {
                 is Token.Minus -> parseFunction { a, b -> a - b }
                 is Token.Times -> parseFunction { a, b -> a * b }
                 is Token.Divide -> parseFunction { a, b -> a / b }
+                is Token.Map -> parseMap()
                 is Token.Eof -> parseEof()
             }
         }
@@ -38,25 +39,39 @@ private class Parser(val tokens: Iterator<Token>) {
         scope = scope.append(singleFunction)
     }
 
-    private fun parseEof() {
-        if (parameters.empty()) {
-            program += WhateverMethod {
-                val values = scope.invoke(it, it.stack)
-                it.puts(values)
+    private fun parseMap() {
+        val currentScope = scope
+
+        program += WhateverMethod { whatever ->
+            val returnValues = whatever.stack.values.flatMap { value ->
+                currentScope.invoke(whatever, SimpleValueStack(value))
             }
+            whatever.stack.clear()
+            whatever.stack.addAll(returnValues)
+            returnValues
+        }
+        scope = EmptyFunction
+    }
+
+    private fun parseEof() {
+        if (parameters.isNotEmpty()) {
+            program += parameters.map { parameter -> WhateverMethod { whatever -> whatever.puts(parameter) } }
         } else {
-            program += parameters.map { WhateverMethod { whatever -> whatever.puts(it) } }
+            program += WhateverMethod { whatever ->
+                val values = scope.invoke(whatever, whatever.stack)
+                whatever.puts(values)
+            }
         }
     }
 
-    private fun createWhateverFunction(function: (Value) -> Value): SingleFunction =
+    private fun createWhateverFunction(function: (Value) -> Value) =
             SingleFunction { stack ->
                 val a = stack.pop()
                 val result = function.invoke(a)
                 listOf(result)
             }
 
-    private fun createWhateverFunction(function: (Value, Value) -> Value): SingleFunction =
+    private fun createWhateverFunction(function: (Value, Value) -> Value) =
             SingleFunction { stack ->
                 val (a, b) = stack.pop(2)
                 val result = function.invoke(a, b)

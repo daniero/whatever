@@ -11,11 +11,18 @@ interface ValueStack {
     }
 
     fun pop(): Value
+
     fun pop(n: Int): List<Value>
 }
 
-class SimpleValueStack : ValueStack {
+class SimpleValueStack(vararg values: Value) : ValueStack {
     private val stack = Stack<Value>()
+    val values
+        get() = stack.toList()
+
+    init {
+        stack.addAll(values)
+    }
 
     override fun push(value: Value): Value? {
         return stack.push(value)
@@ -31,5 +38,39 @@ class SimpleValueStack : ValueStack {
 
     fun clear() {
         stack.clear()
+    }
+
+    fun addAll(values: List<Value>): Boolean {
+        return stack.addAll(values)
+    }
+
+    fun isNotEmpty(): Boolean = stack.isNotEmpty()
+
+    override fun toString(): String {
+        return "SimpleValueStack[$stack]"
+    }
+}
+
+// TODO better name ???
+class OutputBuffer(val input: ValueStack) : ValueStack {
+    val output = SimpleValueStack();
+
+    override fun push(value: Value): Value? {
+        return output.push(value)
+    }
+
+    override fun pop(): Value {
+        if (output.isNotEmpty()) {
+            return output.pop()
+        }
+        return input.pop()
+    }
+
+    override fun pop(n: Int): List<Value> {
+        val list = ArrayList<Value>()
+
+        repeat(n) { list += this.pop() }
+
+        return list.reversed()
     }
 }
