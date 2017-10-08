@@ -8,6 +8,7 @@ sealed class Token {
     object Times : Token()
     object Divide : Token()
     object Map : Token()
+    object Reduce: Token()
 }
 
 sealed class Value : Token() {

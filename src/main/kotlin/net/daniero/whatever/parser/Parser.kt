@@ -22,6 +22,7 @@ private class Parser(val tokens: Iterator<Token>) {
                 is Token.Times -> parseFunction { a, b -> a * b }
                 is Token.Divide -> parseFunction { a, b -> a / b }
                 is Token.Map -> parseMap()
+                is Token.Reduce -> parseReduce()
                 is Token.Eof -> parseEof()
             }
         }
@@ -50,6 +51,23 @@ private class Parser(val tokens: Iterator<Token>) {
             whatever.stack.addAll(returnValues)
             returnValues
         }
+        scope = EmptyFunction
+    }
+
+    private fun parseReduce() {
+        val currentScope = scope
+
+        program += WhateverMethod { whatever ->
+            val values = whatever.stack.values.reversed()
+            val returnValue = values.reduce { result: Value, value: Value ->
+                val res = currentScope.invoke(whatever, SimpleValueStack(result, value))
+                res.first()
+            }
+            whatever.stack.clear()
+            whatever.stack.push(returnValue)
+            listOf(returnValue)
+        }
+
         scope = EmptyFunction
     }
 

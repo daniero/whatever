@@ -25,6 +25,7 @@ private class Tokenizer(private val chars: PeekIterator<Char>) {
                     '*' -> Token.Times
                     '/' -> Token.Divide
                     'M' -> Token.Map
+                    'R' -> Token.Reduce
                     else -> Token.Unknown
                 }
 

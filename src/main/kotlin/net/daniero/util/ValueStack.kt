@@ -17,12 +17,13 @@ interface ValueStack {
 
 class SimpleValueStack(vararg values: Value) : ValueStack {
     private val stack = Stack<Value>()
-    val values
-        get() = stack.toList()
 
     init {
         stack.addAll(values)
     }
+
+    val values get() = stack.toList()
+    val size get() = stack.size
 
     override fun push(value: Value): Value? {
         return stack.push(value)

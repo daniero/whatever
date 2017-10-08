@@ -159,6 +159,18 @@ class WhateverTest : Spek({
             assertEquals("9\n6\n3\n", output)
         }
     }
+
+    describe("Reduce") {
+        it("reduces the values on the stack through the given function") {
+            whatever.stack.push(2, 5, 7)
+
+            val output = run(" * R ")
+
+            assertEquals(1, whatever.stack.size)
+            assertEquals(IntValue(70), whatever.stack.values[0])
+            assertEquals("70\n", output)
+        }
+    }
 })
 
 fun ValueStack.push(vararg ns: Int) {
