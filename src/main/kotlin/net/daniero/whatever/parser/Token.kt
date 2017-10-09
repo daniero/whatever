@@ -8,7 +8,7 @@ sealed class Token {
     object Times : Token()
     object Divide : Token()
     object Map : Token()
-    object Reduce: Token()
+    object Reduce : Token()
 }
 
 sealed class Value : Token() {
@@ -62,10 +62,26 @@ internal class IntValue(val value: Int) : Value() {
 }
 
 class StringValue(val value: String) : Value() {
-    override fun plus(that: Value): Value = TODO()
+    override fun plus(that: Value): Value =
+            when (that) {
+                is IntValue -> StringValue(this.value + that.value)
+                is StringValue -> StringValue(this.value + that.value)
+            }
+
     override fun minus(that: Value): Value = TODO()
     override fun times(that: Value): Value = TODO()
     override fun div(that: Value): Value = TODO()
 
     override fun toString() = value
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is StringValue) return false
+
+        return this.value.equals(other.value)
+    }
+
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
 }

@@ -8,6 +8,7 @@ import net.daniero.whatever.parser.parse
 import net.daniero.whatever.parser.tokenize
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.platform.runner.JUnitPlatform
@@ -170,6 +171,31 @@ class WhateverTest : Spek({
             assertEquals(IntValue(70), whatever.stack.values[0])
             assertEquals("70\n", output)
         }
+
+        given("no parameters") {
+            it("uses the last value on the stack as the initial value") {
+                whatever.stack.push("a", "b", "c")
+
+                val output = run(""" 1+ + R """)
+
+                assertEquals(1, whatever.stack.size)
+                assertEquals(StringValue("cb1a1"), whatever.stack.values[0])
+                assertEquals("cb1a1\n", output)
+            }
+        }
+
+        given("a parameter") {
+            it("uses that as the initial value") {
+                whatever.stack.push("a", "b", "c")
+
+                val output = run(""" "Y"+ + "X"R """)
+
+                assertEquals(1, whatever.stack.size)
+                assertEquals(StringValue("XcYbYaY"), whatever.stack.values[0])
+            }
+
+        }
+
     }
 })
 

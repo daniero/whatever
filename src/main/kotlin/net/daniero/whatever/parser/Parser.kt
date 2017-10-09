@@ -57,17 +57,37 @@ private class Parser(val tokens: Iterator<Token>) {
     private fun parseReduce() {
         val currentScope = scope
 
-        program += WhateverMethod { whatever ->
-            val values = whatever.stack.values.reversed()
-            val returnValue = values.reduce { result: Value, value: Value ->
-                val res = currentScope.invoke(whatever, SimpleValueStack(result, value))
-                res.first()
+        val method = when (parameters.size) {
+            0 -> {
+                WhateverMethod { whatever ->
+                    val values = whatever.stack.values.reversed()
+                    val returnValue = values.reduce { result: Value, value: Value ->
+                        val res = currentScope.invoke(whatever, SimpleValueStack(result, value))
+                        res.first()
+                    }
+                    whatever.stack.clear()
+                    whatever.stack.push(returnValue)
+                    listOf(returnValue)
+                }
             }
-            whatever.stack.clear()
-            whatever.stack.push(returnValue)
-            listOf(returnValue)
+            else -> {
+                val acc = parameters.pop()
+
+                WhateverMethod { whatever ->
+                    val values = whatever.stack.values.reversed()
+                    val returnValue = values.fold(acc) { result: Value, value: Value ->
+                        val res = currentScope.invoke(whatever, SimpleValueStack(result, value))
+                        res.first()
+                    }
+                    whatever.stack.clear()
+                    whatever.stack.push(returnValue)
+                    listOf(returnValue)
+                }
+
+            }
         }
 
+        program += method
         scope = EmptyFunction
     }
 
