@@ -31,15 +31,15 @@ class TokenizerTest : Spek({
 
     describe("strings") {
         it("gives string literals") {
-            val tokens = tokenize(""" "Hey" "Hello" """)
+            val tokens = tokenize(""" "A" "B""C" """)
 
-            val token1 = tokens.next()
-            assertTrue(token1 is StringValue)
-            assertEquals("Hey", (token1 as StringValue).value)
-            val token2 = tokens.next()
-            assertTrue(token2 is StringValue)
-            assertEquals("Hello", (token2 as StringValue).value)
-            assertEquals(Token.Eof, tokens.next())
+            val token1 = tokens.next() as StringValue
+            assertEquals("A", token1.value)
+            val token2 = tokens.next() as StringValue
+            assertEquals("B", token2.value)
+            val token3 = tokens.next() as StringValue
+            assertEquals("C", token3.value)
+            tokens.next() as Token.Eof
         }
 
         it("must be terminated") {

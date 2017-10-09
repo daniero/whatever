@@ -76,6 +76,14 @@ class WhateverTest : Spek({
 
                 assertEquals("3\n", output)
             }
+
+            it("works with strings too") {
+                whatever.stack.push("a")
+
+                val output = run(""" "b"+ """)
+
+                assertEquals("ab\n", output)
+            }
         }
 
         describe("minus") {
@@ -176,11 +184,11 @@ class WhateverTest : Spek({
             it("uses the last value on the stack as the initial value") {
                 whatever.stack.push("a", "b", "c")
 
-                val output = run(""" 1+ + R """)
+                val output = run(""" "X"+ + R """)
 
                 assertEquals(1, whatever.stack.size)
-                assertEquals(StringValue("cb1a1"), whatever.stack.values[0])
-                assertEquals("cb1a1\n", output)
+                assertEquals(StringValue("cbXaX"), whatever.stack.values[0])
+                assertEquals("cbXaX\n", output)
             }
         }
 

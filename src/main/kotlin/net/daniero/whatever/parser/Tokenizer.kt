@@ -59,11 +59,7 @@ private class Tokenizer(private val chars: PeekIterator<Char>) {
             buffer.append(currChar!!)
         }
 
-        readNext()
-
-        val value = buffer.toString()
-        val stringToken = StringValue(value)
-        return stringToken
+        return StringValue(buffer.toString())
     }
 
     private fun skipWhiteSpace(): Boolean {
