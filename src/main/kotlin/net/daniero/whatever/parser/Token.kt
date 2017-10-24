@@ -18,11 +18,19 @@ sealed class Value : Token() {
     abstract operator fun div(that: Value): Value
 }
 
-internal class IntValue(val value: Int) : Value() {
+object Empty : Value() {
+    override fun plus(that: Value): Value = that
+    override fun times(that: Value): Value = that
+    override fun minus(that: Value): Value = that
+    override fun div(that: Value): Value = that
+}
+
+class IntValue(val value: Int) : Value() {
     override fun plus(that: Value): Value {
         return when (that) {
             is IntValue -> IntValue(this.value + that.value)
             is StringValue -> TODO()
+            Empty -> this
         }
     }
 
@@ -30,6 +38,7 @@ internal class IntValue(val value: Int) : Value() {
         return when (that) {
             is IntValue -> IntValue(this.value - that.value)
             is StringValue -> TODO()
+            Empty -> this
         }
     }
 
@@ -37,6 +46,7 @@ internal class IntValue(val value: Int) : Value() {
         return when (that) {
             is IntValue -> IntValue(this.value * that.value)
             is StringValue -> TODO()
+            Empty -> this
         }
     }
 
@@ -44,6 +54,7 @@ internal class IntValue(val value: Int) : Value() {
         return when (that) {
             is IntValue -> IntValue(this.value / that.value)
             is StringValue -> TODO()
+            Empty -> this
         }
     }
 
@@ -66,6 +77,7 @@ class StringValue(val value: String) : Value() {
             when (that) {
                 is IntValue -> StringValue(this.value + that.value)
                 is StringValue -> StringValue(this.value + that.value)
+                Empty -> this
             }
 
     override fun minus(that: Value): Value = TODO()

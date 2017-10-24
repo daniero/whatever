@@ -1,6 +1,6 @@
 package net.daniero.whatever.runtime
 
-import net.daniero.util.pop
+import net.daniero.whatever.parser.Empty
 import net.daniero.whatever.parser.Value
 import java.util.*
 
@@ -31,11 +31,13 @@ class SimpleValueStack(vararg values: Value) : ValueStack {
     }
 
     override fun pop(): Value {
-        return stack.pop()
+        return if (stack.isNotEmpty()) stack.pop() else Empty
     }
 
     override fun pop(n: Int): List<Value> {
-        return stack.pop(n)
+        val list = ArrayList<Value>()
+        repeat(n) { list += pop() }
+        return list.reversed()
     }
 
     fun clear() {
