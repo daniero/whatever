@@ -1,8 +1,8 @@
 package net.daniero.whatever
 
-import net.daniero.util.SimpleValueStack
 import net.daniero.whatever.ast.Program
 import net.daniero.whatever.parser.Value
+import net.daniero.whatever.runtime.SimpleValueStack
 import java.io.InputStream
 import java.io.PrintStream
 

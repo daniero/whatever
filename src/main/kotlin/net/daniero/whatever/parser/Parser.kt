@@ -1,7 +1,7 @@
 package net.daniero.whatever.parser
 
-import net.daniero.util.SimpleValueStack
 import net.daniero.whatever.ast.*
+import net.daniero.whatever.runtime.SimpleValueStack
 import org.funktionale.partials.invoke
 import java.util.*
 import kotlin.collections.ArrayList

@@ -1,11 +1,11 @@
 package net.daniero.whatever
 
-import net.daniero.util.ValueStack
 import net.daniero.whatever.io.StringPrintStream
 import net.daniero.whatever.parser.IntValue
 import net.daniero.whatever.parser.StringValue
 import net.daniero.whatever.parser.parse
 import net.daniero.whatever.parser.tokenize
+import net.daniero.whatever.runtime.ValueStack
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given

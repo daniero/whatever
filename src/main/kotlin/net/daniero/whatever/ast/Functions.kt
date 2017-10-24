@@ -1,9 +1,9 @@
 package net.daniero.whatever.ast
 
-import net.daniero.util.OutputBuffer
-import net.daniero.util.ValueStack
 import net.daniero.whatever.Whatever
 import net.daniero.whatever.parser.Value
+import net.daniero.whatever.runtime.OutputBuffer
+import net.daniero.whatever.runtime.ValueStack
 
 sealed class WhateverStatement {
     abstract fun invoke(whatever: Whatever, stack: ValueStack): List<Value>

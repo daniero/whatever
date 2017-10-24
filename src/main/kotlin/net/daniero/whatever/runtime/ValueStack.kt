@@ -1,5 +1,6 @@
-package net.daniero.util
+package net.daniero.whatever.runtime
 
+import net.daniero.util.pop
 import net.daniero.whatever.parser.Value
 import java.util.*
 
