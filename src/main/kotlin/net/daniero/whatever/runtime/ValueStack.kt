@@ -13,7 +13,11 @@ interface ValueStack {
 
     fun pop(): Value
 
-    fun pop(n: Int): List<Value>
+    fun pop(n: Int): List<Value> {
+        val list = ArrayList<Value>()
+        repeat(n) { list += pop() }
+        return list.reversed()
+    }
 }
 
 class SimpleValueStack(vararg values: Value) : ValueStack {
@@ -32,12 +36,6 @@ class SimpleValueStack(vararg values: Value) : ValueStack {
 
     override fun pop(): Value {
         return if (stack.isNotEmpty()) stack.pop() else Empty
-    }
-
-    override fun pop(n: Int): List<Value> {
-        val list = ArrayList<Value>()
-        repeat(n) { list += pop() }
-        return list.reversed()
     }
 
     fun clear() {
@@ -68,13 +66,5 @@ class OutputBuffer(val input: ValueStack) : ValueStack {
             return output.pop()
         }
         return input.pop()
-    }
-
-    override fun pop(n: Int): List<Value> {
-        val list = ArrayList<Value>()
-
-        repeat(n) { list += this.pop() }
-
-        return list.reversed()
     }
 }
