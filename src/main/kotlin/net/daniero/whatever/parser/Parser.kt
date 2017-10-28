@@ -2,6 +2,7 @@ package net.daniero.whatever.parser
 
 import net.daniero.whatever.ast.*
 import net.daniero.whatever.runtime.SimpleValueStack
+import net.daniero.whatever.runtime.ValueStack
 import org.funktionale.partials.invoke
 import java.util.*
 import kotlin.collections.ArrayList
@@ -44,12 +45,13 @@ private class Parser(val tokens: Iterator<Token>) {
         val currentScope = scope
 
         program += WhateverMethod { whatever ->
-            val returnValues = whatever.stack.values.flatMap { value ->
-                currentScope.invoke(whatever, SimpleValueStack(value))
+            val returnValues = whatever.stack.slidingWindow().map { stack: ValueStack ->
+                currentScope.invoke(whatever, stack)
             }
             whatever.stack.clear()
-            whatever.stack.addAll(returnValues)
-            returnValues
+            val values = returnValues.flatten().toList().reversed()
+            whatever.stack.addAll(values)
+            values
         }
         scope = EmptyFunction
     }

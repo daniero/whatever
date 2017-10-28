@@ -162,10 +162,22 @@ class WhateverTest : Spek({
 
             val output = run(" 3* M ")
 
-            assertEquals(IntValue(3), whatever.stack.values[0])
-            assertEquals(IntValue(6), whatever.stack.values[1])
-            assertEquals(IntValue(9), whatever.stack.values[2])
+            assertEquals(IntValue(9), whatever.stack.pop())
+            assertEquals(IntValue(6), whatever.stack.pop())
+            assertEquals(IntValue(3), whatever.stack.pop())
             assertEquals("9\n6\n3\n", output)
+        }
+
+        it("allows access to values deeper down the stack in each iteration") {
+            whatever.stack.push(1, 20, 400, 8000)
+
+            run("+M")
+
+            assertEquals(IntValue(8400), whatever.stack.pop())
+            assertEquals(IntValue(420), whatever.stack.pop())
+            assertEquals(IntValue(21), whatever.stack.pop())
+            assertEquals(IntValue(1), whatever.stack.pop())
+            assertEquals(0, whatever.stack.size)
         }
     }
 

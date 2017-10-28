@@ -12,6 +12,7 @@ sealed class Token {
 }
 
 sealed class Value : Token() {
+    abstract val value: Any
     abstract operator fun plus(that: Value): Value
     abstract operator fun times(that: Value): Value
     abstract operator fun minus(that: Value): Value
@@ -19,13 +20,14 @@ sealed class Value : Token() {
 }
 
 object Empty : Value() {
+    override val value: Any get() = TODO()
     override fun plus(that: Value): Value = that
     override fun times(that: Value): Value = that
     override fun minus(that: Value): Value = that
     override fun div(that: Value): Value = that
 }
 
-class IntValue(val value: Int) : Value() {
+class IntValue(override val value: Int) : Value() {
     override fun plus(that: Value): Value {
         return when (that) {
             is IntValue -> IntValue(this.value + that.value)
@@ -72,12 +74,11 @@ class IntValue(val value: Int) : Value() {
     }
 }
 
-class StringValue(val value: String) : Value() {
+class StringValue(override val value: String) : Value() {
     override fun plus(that: Value): Value =
             when (that) {
-                is IntValue -> StringValue(this.value + that.value)
-                is StringValue -> StringValue(this.value + that.value)
                 Empty -> this
+                else -> StringValue(this.value + that.value)
             }
 
     override fun minus(that: Value): Value = TODO()

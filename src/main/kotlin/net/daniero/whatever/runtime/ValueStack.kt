@@ -3,8 +3,11 @@ package net.daniero.whatever.runtime
 import net.daniero.whatever.parser.Empty
 import net.daniero.whatever.parser.Value
 import java.util.*
+import kotlin.coroutines.experimental.buildSequence
 
 interface ValueStack {
+    val values: List<Value>
+
     fun push(value: Value): Value?
 
     fun push(values: List<Value>) {
@@ -23,12 +26,12 @@ interface ValueStack {
 class SimpleValueStack(vararg values: Value) : ValueStack {
     private val stack = Stack<Value>()
 
+    override val values get() = stack.toList()
+    val size get() = stack.size
+
     init {
         stack.addAll(values)
     }
-
-    val values get() = stack.toList()
-    val size get() = stack.size
 
     override fun push(value: Value): Value? {
         return stack.push(value)
@@ -48,14 +51,32 @@ class SimpleValueStack(vararg values: Value) : ValueStack {
 
     fun isNotEmpty(): Boolean = stack.isNotEmpty()
 
-    override fun toString(): String {
-        return "SimpleValueStack[$stack]"
+    fun slidingWindow(): Sequence<ValueStack> {
+        var remainingValues = values
+
+        return buildSequence {
+            while (remainingValues.isNotEmpty()) {
+                yield(SimpleValueStack(*remainingValues.toTypedArray()))
+                remainingValues = remainingValues.dropLast(1);
+            }
+        }
+    }
+
+    override fun toString(): String = "SimpleValueStack[$stack]"
+
+    override fun equals(other: Any?): Boolean {
+        if (other == null) return false;
+        if (other !is SimpleValueStack) return false
+
+        return this.values.equals(other.values)
     }
 }
 
 // TODO better name ???
 class OutputBuffer(val input: ValueStack) : ValueStack {
     val output = SimpleValueStack();
+
+    override val values get() = input.values + output.values
 
     override fun push(value: Value): Value? {
         return output.push(value)
